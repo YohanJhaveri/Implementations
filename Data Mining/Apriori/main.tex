@@ -1,0 +1,73 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{pgf,tikz}
+\usepackage{minted}
+\usepackage{float}
+\usepackage{aliascnt}
+\newaliascnt{eqfloat}{equation}
+\newfloat{eqfloat}{h}{eqflts}
+\floatname{eqfloat}{Equation}
+
+\usepackage{geometry}
+ \geometry{
+ left=42mm,
+ top=42mm,
+ bottom=42mm,
+ right=42mm,
+ }
+
+\title{Homework 2: Apriori Algorithm}
+\author{Yohan Jhaveri}
+\date{February 20st 2020}
+
+\begin{document}
+
+
+\maketitle
+
+\section{Collaboration Statement}
+For this homework, I collaborated with Katherine Walton and we discussed various ideas on optimization techniques for this algorithm.
+
+\section{Results}
+\subsection{Computer Specifications:}
+\begin{itemize}
+\item Model: MacBook Pro (Retina, 13-inch, Early 2015)
+\item Processor: 2.7 GHz Intel Core i5
+\item Memory: 8 GB 1867 MHz DDR3
+\end{itemize}
+
+\subsection{Runtimes:}
+Dataset: T10I4D100K.txt
+
+\begin{itemize}
+\item Minimum Support Threshold: Time
+\item 500: 25.27s
+\item 1000: 16.88s
+\item 1500: 16.84s
+\item 2000: 17.55s
+\item 2500: 18.21s
+\item 3000: 17.53s
+\item 3500: 17.96s
+\item 4000: 17.74s
+\item 4500: 17.68s
+\item 5000: 17.81s
+\end{itemize}
+
+
+
+\section{Optimizations}
+
+\subsection{Data Encoding:} I encoded the transaction information into a 2 dimensional array with each column representing a unique item and each row representing a unique transaction. The binary values in the array represented whether the specific item was present in the specific transaction.  
+
+\subsection{Counting of two-item combinations:} In my original algorithm, I used the 2D array to find the frequencies of n-item combinations where n $>$ 1. I noticed however, that for n = 2, the items took about 95\% of the time (Overall time on my laptop was 10 minutes for a minimum support threshold of 500 on T10I4D100K.txt). Therefore, to optimize this, I iterate over each of the two-item combinations for each transaction using two nested for loops, keeping a track of how many times they appear using a dictionary. This ended up being significantly more efficient, improving my runtime to about 25 seconds for the same parameters.
+
+\subsection{Combination Frequency:} I took advantage of numpy's parallel operations and to find whether a combination of \textit{n} items existed in each of the \textit{m} transactions, I selected the columns corresponding to those \textit{n} items, resulting in a (\textit{m} × \textit{n}) matrix. I then performed row-wise multiplication (for each transaction), where I multiplied all the binary values together in each row to yield a resulting binary value corresponding to that row. The result is a (\textit{m} * \textit{1}) vector, where each of the \textit{m} rows have one corresponding binary value that indicated whether that transaction contained the \textit{n} items in the selected combination. I then took the sum of this vector to find the number of transactions this combination was present in. This was an easy way to find the support of the item combination.
+
+
+\section{Experiences}
+I have learned about packages like defaultdict and the power of parallelized operations such as those in numpy.
+
+\end{document}

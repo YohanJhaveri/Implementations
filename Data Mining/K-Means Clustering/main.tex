@@ -1,0 +1,236 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{pgf,tikz}
+\usepackage{minted}
+\usepackage{float}
+\usepackage{aliascnt}
+\newaliascnt{eqfloat}{equation}
+\newfloat{eqfloat}{h}{eqflts}
+\floatname{eqfloat}{Equation}
+
+\usepackage{geometry}
+ \geometry{
+ left=30mm,
+ top=42mm,
+ bottom=42mm,
+ right=30mm,
+ }
+
+\title{Homework 3: K-Means Clustering}
+\author{Yohan Jhaveri}
+\date{February 25th 2020}
+
+\begin{document}
+
+
+\maketitle
+
+\section{Collaboration Statement}
+This code was my own work and it was written without consulting any sources outside of those approved by the instructor. I did not collaborate with any student for this homework.
+
+
+\section{Dataset Descriptions}
+\subsection{Iris Dataset:}
+http://archive.ics.uci.edu/ml/datasets/Iris
+\begin{itemize}
+\item Background: This is perhaps the best known database to be found in the pattern recognition literature. The data set contains 3 classes of 50 instances each, where each class refers to a type of iris plant. One class is linearly separable from the other two however the latter are not linearly separable from each other.
+
+\item Instances: 150 instances 
+\item Attributes: 4 attributes
+\begin{enumerate}
+    \item Sepal Length (cm)
+    \item Sepal Width (cm)
+    \item Petal Length (cm)
+    \item petal width (cm)
+\end{enumerate}
+\item Class Frequencies: 
+\begin{enumerate}
+    \item Iris Setosa: 50
+    \item Iris Versicolour: 50
+    \item Iris Virginica: 50
+\end{enumerate}
+\end{itemize}
+
+\subsection{Wine Dataset:}
+http://archive.ics.uci.edu/ml/datasets/Wine
+\begin{itemize}
+\item Background: The data is the result of a chemical analysis of wines grown in the same region in Italy but derived from three different cultivars. The analysis determined the quantities of 13 constituents found in each of the three types of wines.
+\item Instances: 178 instances 
+\item Attributes: 13 attributes
+\begin{enumerate}
+    \item Alcohol
+    \item Malic acid
+    \item Ash
+    \item Alcalinity of ash
+    \item Magnesium
+    \item Total phenols
+    \item Flavanoids
+    \item Nonflavanoid phenols
+    \item Proanthocyanins
+    \item Color intensity
+    \item Hue
+    \item OD280/OD315 of diluted wines
+    \item Proline
+\end{enumerate}
+\item Class Frequencies: 
+\begin{enumerate}
+    \item Class 1: 59
+    \item Class 2: 71
+    \item Class 3: 48
+\end{enumerate}
+\end{itemize}
+
+\section{Implementation}
+\subsection{Pre-processing:}
+I did not perform any preprocessing on the data other than removing the class label while reading the data in. 
+
+\subsection{Setup:}
+\subsubsection{Helper Functions:}
+The helper functions employed in the implementation were:
+\begin{itemize}
+    \item \textbf{euclidean\_distance(x, y)}: calculates the euclidean distance between vectors x and y
+    \item \textbf{variance(clusters, centroids)}: calculates the total SSE of all clusters
+    \item \textbf{silhouette(clusters, centroids)}: calculates the silhouette coefficient of the clusters
+    \item \textbf{classify(centroids)}: assigns data points to clusters based on given cluster centroids
+    \item \textbf{select\_random\_centroids(k)}: initializes random data points as cluster centroids
+\end{itemize}
+
+\subsubsection{Steps:}
+The steps taken in the algorithm were:
+\begin{enumerate}
+    \item Read in input file and store data points in a list
+    \item Initialize cluster centroids using \textbf{select\_random\_centroids(k)}
+    \item Classify data points according to randomly selected centroids using \textbf{classify(centroids)}
+    \item \textit{\textbf{Begin while loop}}
+    \item If any cluster contains 0 data points, re-initialize centroids using \textbf{select\_random\_centroids(k)}
+    \item Else find the mean of data points in the same cluster and label them as the new cluster centroids
+    \item Classify data points according these new centroids to generate new clusters using \textbf{classify(centroids)}
+    \item While cluster classification changes from iteration to iteration, \textbf{\textit{continue while loop}}
+    \item If the clusters do not change when classified with the  newly calculated means, \textbf{\textit{exit while loop}}
+    \item Write final cluster labels to output file along with SSE and silhouette coefficient
+\end{enumerate}
+
+\section{Results}
+\subsection{Iris Dataset:}
+\begin{itemize}
+
+    \item{k = 2}
+        \begin{itemize}
+            \item SSE: 16.4717
+            \item Silhouette: 0.6808
+        \end{itemize}
+        
+    \item{k = 3}
+        \begin{itemize}
+            \item SSE: 15.1331
+            \item Silhouette: 0.5510
+        \end{itemize}
+        
+    \item{k = 4}
+        \begin{itemize}
+            \item SSE: 15.09125
+            \item Silhouette: 0.4951
+        \end{itemize}
+        
+    \item{k = 5}
+        \begin{itemize}
+            \item SSE: 14.9055
+            \item Silhouette: 0.4929
+        \end{itemize}
+        
+    \item{k = 6}
+        \begin{itemize}
+            \item SSE: 15.3983
+            \item Silhouette: 0.3291
+        \end{itemize}
+        
+    \item{k = 7}
+        \begin{itemize}
+            \item SSE: 15.2081
+            \item Silhouette: 0.3622
+        \end{itemize}
+        
+    \item{k = 8}
+        \begin{itemize}
+            \item SSE: 16.3628
+            \item Silhouette: 0.4406
+        \end{itemize}
+        
+    \item{k = 9}
+        \begin{itemize}
+            \item SSE: 15.4655
+            \item Silhouette:  0.2693
+        \end{itemize}
+        
+    \item{k = 10}
+        \begin{itemize}
+            \item SSE: 16.2241
+            \item Silhouette: 0.2699
+        \end{itemize}
+\end{itemize}
+
+\subsection{Wine Dataset:}
+\begin{itemize}
+
+    \item{k = 2}
+        \begin{itemize}
+            \item SSE: 3012.0089
+            \item Silhouette: 0.6543
+        \end{itemize}
+        
+    \item{k = 3}
+         \begin{itemize}
+            \item SSE: 2577.0286
+            \item Silhouette: 0.5731
+        \end{itemize}
+        
+    \item{k = 4}
+         \begin{itemize}
+            \item SSE: 2295.8989
+            \item Silhouette: 0.5617
+        \end{itemize}
+        
+    \item{k = 5}
+        \begin{itemize}
+            \item SSE: 2088.8513
+            \item Silhouette: 0.5607
+        \end{itemize}
+        
+    \item{k = 6}
+        \begin{itemize}
+            \item SSE: 2042.3474
+            \item Silhouette: 0.5043
+        \end{itemize}
+        
+    \item{k = 7}
+        \begin{itemize}
+            \item SSE: 1839.6220
+            \item Silhouette: 0.5200
+        \end{itemize}
+        
+    \item{k = 8}
+        \begin{itemize}
+            \item SSE: 1787.6400
+            \item Silhouette: 0.5008
+        \end{itemize}
+        
+    \item{k = 9}
+        \begin{itemize}
+            \item SSE: 1712.9563
+            \item Silhouette: 0.4884
+        \end{itemize}
+        
+    \item{k = 10}
+        \begin{itemize}
+            \item SSE: 1572.8955
+            \item Silhouette: 0.5094
+        \end{itemize}
+\end{itemize}
+
+\section{Experiences}
+Overall, I really enjoyed implementing K-Means Clustering. The algorithm is very intuitive and it was great to finally learn an unsupervised learning algorithm and its implementation after having learnt only supervised learning algorithms in CS334. I learned a few tricks using excepting errors and realized the power of python list comprehensions (especially line 33 of my code). I also learned about the strategy of silhouette coefficient in determining the "goodness" of a cluster.
+
+\end{document}

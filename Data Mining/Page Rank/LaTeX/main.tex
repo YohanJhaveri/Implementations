@@ -1,0 +1,465 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{pgf,tikz}
+\usepackage{minted}
+\usepackage{float}
+\usepackage{aliascnt}
+\newaliascnt{eqfloat}{equation}
+\newfloat{eqfloat}{h}{eqflts}
+\floatname{eqfloat}{Equation}
+
+\usepackage{geometry}
+ \geometry{
+ left=30mm,
+ top=42mm,
+ bottom=42mm,
+ right=30mm,
+ }
+
+\title{Homework 4: PageRank}
+\author{Yohan Jhaveri}
+\date{April 9th 2020}
+
+\begin{document}
+
+
+\maketitle
+
+\section{Collaboration Statement}
+This code was my own work and it was written without consulting any sources outside of those approved by the instructor. I did not collaborate with any student for this homework.
+
+\section{Implementation}
+\subsection{Approach}
+I decided to implement PageRank using the standard approach, creating a normalized adjacency matrix and performing matrix multiplication to update the PageRanks.
+
+\subsection{Complications}
+\begin{enumerate}
+    \item Dealing with Dead Ends: I deleted dead ends
+    \item Dealing with Spider Traps: I used damping to deal with spider traps
+\end{enumerate}
+
+\section{Experiences}
+It was great to learn about how the heuristic Larry Page first invented to rank webpages for Google's algorithm. While the standard algorithm was clean and easy to implement, the complications mentioned previously caused a lot of problems for the algorithm as it could not deal with those circumstances. Overall, it's an intuitive algorithm which is relatively robust to "hacking" or artificial "inflation" of importance.
+
+\section{Test Cases}
+\subsection{Graph 1}
+digraph {
+
+A -$>$ B
+
+A -$>$ D
+
+B -$>$ D
+
+B -$>$ E
+
+C -$>$ B
+
+C -$>$ E
+
+D -$>$ A
+
+D -$>$ B
+
+D -$>$ E
+
+E -$>$ C 
+
+}
+
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.5]{g1.pdf}
+\label{Figure 1: }
+\caption{Graph 1}
+\end{figure}
+
+\subsection{Graph 2}
+digraph {
+
+A -$>$ C
+
+A -$>$ D
+
+B -$>$ D
+
+B -$>$ J
+
+C -$>$ I
+
+D -$>$ E
+
+D -$>$ I
+
+E -$>$ B 
+
+E -$>$ H
+
+E -$>$ J
+
+F -$>$ C
+
+F -$>$ G
+
+F -$>$ I
+
+G -$>$ F
+
+G -$>$ D
+
+G -$>$ H
+
+H -$>$ J
+
+I -$>$ A
+
+I -$>$ G
+
+I -$>$ J
+
+J -$>$ B
+
+J -$>$ D
+
+J -$>$ E
+
+J -$>$ G
+
+J -$>$ I
+
+}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.4]{g2.pdf}
+\label{Figure 1: }
+\caption{Graph 2}
+\end{figure}
+
+\subsection{Graph 3}
+digraph {
+
+A -$>$ C
+
+A -$>$ D
+
+B -$>$ D
+
+B -$>$ J
+
+C -$>$ I
+
+D -$>$ E
+
+D -$>$ I
+
+E -$>$ B 
+
+E -$>$ H
+
+E -$>$ J
+
+F -$>$ C
+
+F -$>$ G
+
+F -$>$ I
+
+G -$>$ F
+
+G -$>$ D
+
+G -$>$ H
+
+I -$>$ A
+
+I -$>$ G
+
+I -$>$ J
+
+J -$>$ B
+
+J -$>$ D
+
+J -$>$ E
+
+J -$>$ G
+
+J -$>$ I
+
+}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.4]{g3.pdf}
+\label{Figure 1: }
+\caption{Graph 3}
+\end{figure}
+
+\subsection{Graph 4}
+digraph {
+
+A -$>$ B
+
+A -$>$ C
+
+B -$>$ C
+
+B -$>$ D
+
+C -$>$ D
+
+C -$>$ E
+
+C -$>$ F
+
+D -$>$ A
+
+D -$>$ E
+
+E -$>$ F
+
+F -$>$ D
+
+F -$>$ E
+
+F -$>$ H
+
+G -$>$ H
+
+G -$>$ J
+
+H -$>$ G
+
+H -$>$ J
+
+I -$>$ H
+
+J -$>$ I
+
+}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.4]{g4.pdf}
+\label{Figure 1: }
+\caption{Graph 4}
+\end{figure}
+
+\subsection{Graph 5}
+digraph {
+
+y -$>$ z
+
+O -$>$ Q
+
+c -$>$ D
+
+E -$>$ z
+
+O -$>$ N
+
+U -$>$ o
+
+L -$>$ q
+
+G -$>$ z
+
+k -$>$ j
+
+l -$>$ m
+
+C -$>$ g
+
+Y -$>$ u
+
+d -$>$ I
+
+T -$>$ f
+
+y -$>$ x
+
+f -$>$ S
+
+D -$>$ U
+
+H -$>$ z
+
+M -$>$ b
+
+A -$>$ j
+
+H -$>$ o
+
+y -$>$ Z
+
+O -$>$ r
+
+B -$>$ j
+
+D -$>$ m
+
+D -$>$ w
+
+c -$>$ v
+
+L -$>$ I
+
+A -$>$ R
+
+Y -$>$ F
+
+d -$>$ O
+
+T -$>$ i
+
+p -$>$ b
+
+J -$>$ b
+
+u -$>$ g
+
+E -$>$ G
+
+n -$>$ r
+
+i -$>$ v
+
+A -$>$ p
+
+L -$>$ n
+
+t -$>$ N
+
+c -$>$ F
+
+f -$>$ l
+
+I -$>$ s
+
+X -$>$ r
+
+U -$>$ N
+
+N -$>$ F
+
+f -$>$ g
+
+b -$>$ g
+
+y -$>$ i
+
+T -$>$ C
+
+V -$>$ s
+
+T -$>$ o
+
+y -$>$ U
+
+Y -$>$ T
+
+I -$>$ Q
+
+F -$>$ h
+
+l -$>$ M
+
+D -$>$ B
+
+D -$>$ C
+
+E -$>$ H
+
+u -$>$ N
+
+K -$>$ X
+
+n -$>$ X
+
+H -$>$ U
+
+v -$>$ r
+
+Q -$>$ F
+
+I -$>$ l
+
+H -$>$ m
+
+k -$>$ w
+
+d -$>$ M
+
+U -$>$ r
+
+u -$>$ z
+
+a -$>$ m
+
+f -$>$ Q
+
+O -$>$ R
+
+E -$>$ Z
+
+R -$>$ F
+
+e -$>$ j
+
+U -$>$ w
+
+A -$>$ x
+
+f -$>$ M
+
+y -$>$ w
+
+t -$>$ S
+
+b -$>$ j
+
+V -$>$ H
+
+g -$>$ m
+
+d -$>$ f
+
+a -$>$ i
+
+E -$>$ o
+
+u -$>$ b
+
+k -$>$ x
+
+y -$>$ g
+
+K -$>$ j
+
+a -$>$ C
+
+f -$>$ F
+
+w -$>$ S
+
+t -$>$ e
+
+g -$>$ h
+
+G -$>$ o
+
+}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.2]{g5.pdf}
+\label{Figure 1: }
+\caption{Graph 5}
+\end{figure}
+
+\end{document}
